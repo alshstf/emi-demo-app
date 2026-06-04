@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+  background-color: #fff6e6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+@layer components {
+  /* Big juicy primary button */
+  .btn-burger {
+    @apply inline-flex items-center justify-center gap-3 rounded-full bg-burger-red px-10 py-4
+           font-display text-2xl font-extrabold text-white shadow-pop transition-transform
+           hover:scale-[1.04] active:scale-95;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border-2 border-burger-deepred/30
+           bg-white/70 px-5 py-2 font-display font-bold text-burger-deepred transition-colors
+           hover:bg-white;
+  }
+
+  .card {
+    @apply rounded-3xl bg-white/90 shadow-card backdrop-blur-sm ring-1 ring-burger-char/5;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-extrabold uppercase tracking-wide;
+  }
+
+  /* Kitschy outlined headline */
+  .headline {
+    @apply font-display font-extrabold leading-none text-burger-deepred;
+    text-shadow: 0 3px 0 rgba(255, 255, 255, 0.65), 0 6px 18px rgba(158, 27, 27, 0.25);
+  }
+}
+
+/* Sunburst backdrop used on hero / dashboards */
+.bg-sunburst {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 45%),
+    repeating-conic-gradient(
+      from 0deg at 50% 22%,
+      rgba(242, 161, 4, 0.22) 0deg 9deg,
+      rgba(255, 199, 44, 0.05) 9deg 18deg
+    ),
+    linear-gradient(180deg, #ffd14d 0%, #ffc72c 45%, #f2a104 100%);
+}

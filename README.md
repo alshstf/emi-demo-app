@@ -1,0 +1,145 @@
+# 🍔 Бургерный курьер
+
+Демо-приложение **«Бургерный курьер»** компании ООО «Бургер и точка» — тестовый
+веб-клиент для показа продукта **Evolution Managed Identities** (управляемый
+облачный Identity Provider по протоколу OpenID Connect).
+
+Приложение реализует **OIDC Authorization Code Flow + PKCE** целиком на фронтенде
+(публичный клиент, без client_secret) и показывает разные экраны в зависимости от
+роли пользователя:
+
+- **`courier`** — список заказов, которые нужно доставить;
+- **`supervisor`** — список курьеров и число выполненных за сегодня доставок.
+
+Роль определяется по клейму `roles` (список) — он считывается **и из ID-токена,
+и из access-токена** (берётся оттуда, где присутствует).
+
+## Стек
+
+- React 18 + TypeScript + Vite
+- [`oidc-client-ts`](https://github.com/authts/oidc-client-ts) + [`react-oidc-context`](https://github.com/authts/react-oidc-context) — OIDC PKCE
+- Tailwind CSS, Framer Motion, canvas-confetti — визуал «промо-вау»
+- Docker (multi-stage, nginx) + GitHub Actions → Cloud.ru Artifact Registry
+
+## Сценарий (пользовательский флоу)
+
+1. Лендинг с логотипом и кнопкой **«Войти»**.
+2. Редирект в Evolution Managed Identities (Authorization Code + PKCE).
+3. Возврат на `/callback`, обмен кода на токены.
+4. Маршрутизация по роли:
+   - `courier` → `/courier`;
+   - `supervisor` → `/supervisor`;
+   - обе роли → экран выбора рабочего места;
+   - нет известных ролей → экран с перечнем пришедших ролей (удобно для отладки).
+
+## Конфигурация (переменные окружения)
+
+Один и тот же Docker-образ настраивается под любое окружение через переменные
+окружения — они подставляются в `config.js` при старте контейнера.
+
+| Переменная (контейнер) | Переменная (dev, `.env`) | Назначение | По умолчанию |
+| --- | --- | --- | --- |
+| `OIDC_AUTHORITY` | `VITE_OIDC_AUTHORITY` | issuer / база OIDC discovery | — (обязательно) |
+| `OIDC_CLIENT_ID` | `VITE_OIDC_CLIENT_ID` | client_id публичного клиента | — (обязательно) |
+| `OIDC_REDIRECT_URI` | `VITE_OIDC_REDIRECT_URI` | redirect_uri | `<origin>/callback` |
+| `OIDC_POST_LOGOUT_REDIRECT_URI` | `VITE_OIDC_POST_LOGOUT_REDIRECT_URI` | возврат после выхода | `<origin>/` |
+| `OIDC_SCOPE` | `VITE_OIDC_SCOPE` | запрашиваемые scopes | `openid profile` |
+| `OIDC_ROLES_CLAIM` | `VITE_OIDC_ROLES_CLAIM` | имя клейма с ролями | `roles` |
+
+> В контейнере переменные передаются **без** префикса `VITE_`. Локально (через
+> `npm run dev`) Vite читает переменные **с** префиксом `VITE_` из `.env`.
+
+## Настройка клиента в Evolution Managed Identities
+
+Заведите **публичный** OIDC-клиент со следующими параметрами:
+
+- тип клиента: **public** (PKCE, без client_secret);
+- grant: `authorization_code`;
+- **Redirect URIs:** `http://localhost:5173/callback` (для локальной разработки)
+  и `https://<домен-демо>/callback`;
+- **Post-logout redirect URIs:** `http://localhost:5173/` и `https://<домен-демо>/`;
+- **Scopes:** `openid profile` (+ при необходимости scope, который добавляет `roles`);
+- клейм `roles` (список) должен попадать в ID-токен и/или access-токен.
+
+Тестовым пользователям назначьте роли `courier` и/или `supervisor`.
+
+## Локальный запуск
+
+```bash
+cp .env.example .env     # заполнить OIDC_AUTHORITY и OIDC_CLIENT_ID
+npm install
+npm run dev              # http://localhost:5173
+```
+
+## Docker
+
+```bash
+docker build -t burger-courier .
+
+docker run --rm -p 8080:80 \
+  -e OIDC_AUTHORITY="https://<issuer>" \
+  -e OIDC_CLIENT_ID="<client-id>" \
+  -e OIDC_REDIRECT_URI="http://localhost:8080/callback" \
+  -e OIDC_POST_LOGOUT_REDIRECT_URI="http://localhost:8080/" \
+  burger-courier
+# открыть http://localhost:8080
+```
+
+Проверить, что runtime-конфиг сгенерировался:
+
+```bash
+curl -s http://localhost:8080/config.js
+```
+
+## CI/CD: сборка и публикация в Cloud.ru Artifact Registry
+
+Workflow [`.github/workflows/build-push.yml`](.github/workflows/build-push.yml)
+собирает Docker-образ и пушит его в Cloud.ru Artifact Registry при push в `main`,
+по тегам `v*` и по ручному запуску (`workflow_dispatch`).
+
+Аутентификация в реестре — по [персональному ключу](https://cloud.ru/docs/artifact-registry-evolution/ug/topics/guides__auth.html)
+(`docker login <registry_name>.cr.cloud.ru -u <key_id> -p <key_secret>`).
+
+Настройте в репозитории (**Settings → Secrets and variables → Actions**):
+
+**Variables**
+
+| Имя | Значение |
+| --- | --- |
+| `CR_URI` | `<registry_name>.cr.cloud.ru` (URI вашего реестра в Artifact Registry) |
+
+**Secrets**
+
+| Имя | Значение |
+| --- | --- |
+| `EVO_CR_LOGIN` | Key ID персонального ключа Cloud.ru |
+| `EVO_CR_PWD` | Key Secret персонального ключа Cloud.ru |
+
+Образ публикуется как `${CR_URI}/burger-courier` с тегами `latest`,
+`sha-<commit>` и (для тегов) `v*`.
+
+## Структура проекта
+
+```
+src/
+  config.ts            конфиг: window.__APP_CONFIG__ / VITE_* / дефолты
+  oidc.ts              настройки oidc-client-ts (Authorization Code + PKCE)
+  App.tsx, main.tsx    роутинг и провайдеры
+  auth/
+    roles.ts           извлечение roles из ID + access токенов
+    guards.tsx         RequireAuth / RequireRole
+  pages/               Landing, Callback, Courier, Supervisor, RolePicker, NoAccess, Misconfigured
+  components/          Logo, Mascot, BurgerGlyph, FloatingBurgers, AppHeader, Splash, confetti
+  data/                orders.ts, couriers.ts (мок-данные)
+docker/
+  nginx.conf           SPA fallback + кэширование
+  entrypoint.sh        генерация config.js из env при старте
+Dockerfile             multi-stage: node build → nginx
+```
+
+## Демонстрация
+
+Источники по Cloud.ru Artifact Registry:
+
+- [Аутентификация в Artifact Registry](https://cloud.ru/docs/artifact-registry-evolution/ug/topics/guides__auth.html)
+- [Настройка CI/CD с Artifact Registry](https://cloud.ru/docs/tutorials-evolution/list/topics/container-apps__ci-cd)
