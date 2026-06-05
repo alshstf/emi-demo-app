@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from 'react-oidc-context';
 import { Logo } from './Logo';
-import { config } from '../config';
 import { extractRoles } from '../auth/roles';
+import { useLogout } from '../auth/useLogout';
 
 const ROLE_LABEL: Record<string, string> = { courier: 'Курьер', supervisor: 'Супервайзер' };
 const ROLE_CHIP: Record<string, string> = {
@@ -13,6 +13,7 @@ const ROLE_CHIP: Record<string, string> = {
 export function AppHeader({ subtitle }: { subtitle?: string }) {
   const auth = useAuth();
   const navigate = useNavigate();
+  const logout = useLogout();
   const roles = extractRoles(auth.user);
   const p = auth.user?.profile;
   const name =
@@ -21,16 +22,6 @@ export function AppHeader({ subtitle }: { subtitle?: string }) {
     (p?.given_name as string) ||
     (p?.email as string) ||
     'Пользователь';
-
-  const logout = async () => {
-    try {
-      await auth.signoutRedirect({ post_logout_redirect_uri: config.post_logout_redirect_uri });
-    } catch {
-      // IdP may not support end_session — fall back to a local sign-out.
-      await auth.removeUser();
-      navigate('/', { replace: true });
-    }
-  };
 
   return (
     <header className="sticky top-0 z-20 flex items-center justify-between gap-4 border-b border-burger-char/10 bg-white/80 px-4 py-3 backdrop-blur-md sm:px-8">

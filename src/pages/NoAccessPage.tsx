@@ -1,25 +1,16 @@
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from 'react-oidc-context';
 import { PageTransition } from '../components/PageTransition';
 import { Logo } from '../components/Logo';
 import { config } from '../config';
 import { extractRoles } from '../auth/roles';
+import { useLogout } from '../auth/useLogout';
 
 // Authenticated, but without a known role (courier/supervisor). For the demo
 // we show exactly which roles arrived in the token — handy for troubleshooting.
 export function NoAccessPage() {
   const auth = useAuth();
-  const navigate = useNavigate();
+  const logout = useLogout();
   const roles = extractRoles(auth.user);
-
-  const logout = async () => {
-    try {
-      await auth.signoutRedirect({ post_logout_redirect_uri: config.post_logout_redirect_uri });
-    } catch {
-      await auth.removeUser();
-      navigate('/', { replace: true });
-    }
-  };
 
   return (
     <PageTransition className="grid min-h-screen place-items-center bg-sunburst px-6 py-12">
