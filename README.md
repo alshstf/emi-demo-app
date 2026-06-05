@@ -45,9 +45,49 @@
 | `OIDC_POST_LOGOUT_REDIRECT_URI` | `VITE_OIDC_POST_LOGOUT_REDIRECT_URI` | возврат после выхода | `<origin>/` |
 | `OIDC_SCOPE` | `VITE_OIDC_SCOPE` | запрашиваемые scopes | `openid profile` |
 | `OIDC_ROLES_CLAIM` | `VITE_OIDC_ROLES_CLAIM` | имя клейма с ролями | `roles` |
+| `OIDC_PROXY` | `VITE_OIDC_PROXY` | прокси back-channel через `/oidc/` (фикс CORS) | `false` |
+| `OIDC_LOAD_USERINFO` | `VITE_OIDC_LOAD_USERINFO` | запрашивать userinfo после логина | `false` |
+| `OIDC_CLIENT_SECRET` | `VITE_OIDC_CLIENT_SECRET` | secret для confidential-режима (demo-only) | — (пусто) |
 
 > В контейнере переменные передаются **без** префикса `VITE_`. Локально (через
 > `npm run dev`) Vite читает переменные **с** префиксом `VITE_` из `.env`.
+
+## CORS: режим прокси (`OIDC_PROXY`)
+
+Public-client SPA делает из браузера прямые `fetch`-запросы к IdP (`discovery`,
+`jwks`, `POST token`, опционально `userinfo`). Это cross-origin XHR, поэтому
+Evolution MI должен отдавать на них `Access-Control-Allow-Origin` для origin
+приложения. Если этого нет — браузер блокирует запросы (и приходится отключать
+CORS в браузере).
+
+Чтобы демо работало без флагов браузера, есть встроенный **same-origin reverse
+proxy**. При `OIDC_PROXY=true`:
+
+- nginx (тот же контейнер) проксирует `/oidc/<path>` → `<origin OIDC_AUTHORITY>/<path>`;
+- приложение получает discovery через прокси и подменяет только back-channel-эндпоинты
+  (`token`, `jwks`, `userinfo`, `revocation`) на same-origin `/oidc/...`;
+- `authorize` и `logout` остаются прямыми редиректами на реальный IdP — они не
+  подпадают под CORS, а интерактивная страница логина открывается на родном
+  origin Evolution MI.
+
+В итоге браузер ходит только на origin приложения → CORS не нужен. Контейнеру
+требуется сетевой доступ к IdP. Для `npm run dev` тот же прокси поднимает Vite
+(`/oidc` → origin из `VITE_OIDC_AUTHORITY`), так что dev ведёт себя как контейнер.
+
+> Для продакшена корректнее включить CORS / Allowed Web Origins на стороне
+> Evolution MI; режим прокси — удобный фолбэк для демо и окружений, где это пока
+> не настроено.
+
+## Confidential client (`OIDC_CLIENT_SECRET`, demo-only)
+
+По умолчанию приложение — **public client** (только PKCE, без secret). Если задать
+`OIDC_CLIENT_SECRET`, приложение переходит в **confidential**-режим и отправляет
+client_secret при обмене кода на токены — удобно, чтобы проверить, что Evolution MI
+принимает confidential-клиента.
+
+> ⚠️ Это SPA: secret попадает в браузер и **не является защищённым**. Режим
+> предназначен только для демонстрации/проверки. Для настоящего confidential
+> client секрет должен жить на бэкенде (BFF), который и выполняет обмен кода.
 
 ## Настройка клиента в Evolution Managed Identities
 
@@ -81,9 +121,13 @@ docker run --rm -p 8080:80 \
   -e OIDC_CLIENT_ID="<client-id>" \
   -e OIDC_REDIRECT_URI="http://localhost:8080/callback" \
   -e OIDC_POST_LOGOUT_REDIRECT_URI="http://localhost:8080/" \
+  -e OIDC_PROXY="true" \
   burger-courier
 # открыть http://localhost:8080
 ```
+
+`OIDC_PROXY=true` включает same-origin прокси, чтобы не отключать CORS в браузере
+(см. раздел ниже).
 
 Проверить, что runtime-конфиг сгенерировался:
 
