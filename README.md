@@ -12,9 +12,12 @@
 - **`supervisor`** — список курьеров и число выполненных за сегодня доставок.
 
 Роль определяется по списку ролей в токене. По умолчанию роли берутся по пути
-`resource_access.<client_id>.roles` (Keycloak-подобная структура), с фолбэком на
-плоский клейм `roles`. Путь настраивается (`OIDC_ROLES_CLAIM_PATH`), а роли
-считываются **и из ID-токена, и из access-токена** (берутся оттуда, где есть).
+`resource_access.%%OIDC_CLIENT_ID%%.roles` (Keycloak-подобная структура), с
+фолбэком на плоский клейм `roles`. Путь настраивается (`OIDC_ROLES_CLAIM_PATH`) и
+поддерживает шаблоны `%%ИМЯ%%`, где `ИМЯ` — env-имя конфиг-переменной:
+`%%OIDC_CLIENT_ID%%`, `%%OIDC_AUTHORITY%%`, `%%OIDC_SCOPE%%`, `%%OIDC_ROLES_CLAIM%%`
+(легаси-плейсхолдер `{client_id}` тоже поддерживается). Роли считываются **и из
+ID-токена, и из access-токена** (берутся оттуда, где есть).
 
 ## Стек
 
@@ -46,7 +49,7 @@
 | `OIDC_REDIRECT_URI` | `VITE_OIDC_REDIRECT_URI` | redirect_uri | `<origin>/callback` |
 | `OIDC_POST_LOGOUT_REDIRECT_URI` | `VITE_OIDC_POST_LOGOUT_REDIRECT_URI` | возврат после выхода | `<origin>/` |
 | `OIDC_SCOPE` | `VITE_OIDC_SCOPE` | запрашиваемые scopes | `openid profile` |
-| `OIDC_ROLES_CLAIM_PATH` | `VITE_OIDC_ROLES_CLAIM_PATH` | путь до ролей; `{client_id}` подставляется | `resource_access.{client_id}.roles` |
+| `OIDC_ROLES_CLAIM_PATH` | `VITE_OIDC_ROLES_CLAIM_PATH` | путь до ролей; шаблоны `%%ИМЯ%%` | `resource_access.%%OIDC_CLIENT_ID%%.roles` |
 | `OIDC_ROLES_CLAIM` | `VITE_OIDC_ROLES_CLAIM` | плоский клейм ролей (фолбэк) | `roles` |
 | `OIDC_PROXY` | `VITE_OIDC_PROXY` | прокси back-channel через `/oidc/` (фикс CORS) | `false` |
 | `OIDC_LOAD_USERINFO` | `VITE_OIDC_LOAD_USERINFO` | запрашивать userinfo после логина | `false` |

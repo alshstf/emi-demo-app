@@ -68,7 +68,7 @@ export const config: AppConfig = {
   roles_claim_path: resolve(
     'OIDC_ROLES_CLAIM_PATH',
     import.meta.env.VITE_OIDC_ROLES_CLAIM_PATH,
-    'resource_access.{client_id}.roles',
+    'resource_access.%%OIDC_CLIENT_ID%%.roles',
   ),
   proxy: resolveBool('OIDC_PROXY', import.meta.env.VITE_OIDC_PROXY, false),
   load_user_info: resolveBool('OIDC_LOAD_USERINFO', import.meta.env.VITE_OIDC_LOAD_USERINFO, false),

@@ -14,7 +14,7 @@ window.__APP_CONFIG__ = {
   OIDC_POST_LOGOUT_REDIRECT_URI: "${OIDC_POST_LOGOUT_REDIRECT_URI:-}",
   OIDC_SCOPE: "${OIDC_SCOPE:-openid profile}",
   OIDC_ROLES_CLAIM: "${OIDC_ROLES_CLAIM:-roles}",
-  OIDC_ROLES_CLAIM_PATH: "${OIDC_ROLES_CLAIM_PATH:-resource_access.{client_id}.roles}",
+  OIDC_ROLES_CLAIM_PATH: "${OIDC_ROLES_CLAIM_PATH:-resource_access.%%OIDC_CLIENT_ID%%.roles}",
   OIDC_PROXY: "${OIDC_PROXY:-false}",
   OIDC_LOAD_USERINFO: "${OIDC_LOAD_USERINFO:-false}"
 };

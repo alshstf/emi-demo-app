@@ -30,21 +30,39 @@ function toRoleArray(value: unknown): string[] {
   return [];
 }
 
-/**
- * Walk a dot-separated claim path. The literal segment `{client_id}` is
- * substituted with the configured client_id (handled as a single key even if
- * the client_id itself contains dots).
- *
- * e.g. "resource_access.{client_id}.roles" -> source.resource_access[clientId].roles
- */
-function resolveClaimPath(source: Record<string, unknown>, pathTemplate: string): unknown {
-  const segments = pathTemplate
-    .split('.')
-    .map((s) => (s === '{client_id}' ? config.client_id : s))
-    .filter((s) => s.length > 0);
+// Values that can be referenced from a claim-path template via %%NAME%%.
+const TEMPLATE_VARS: Record<string, string> = {
+  OIDC_CLIENT_ID: config.client_id,
+  OIDC_AUTHORITY: config.authority,
+  OIDC_SCOPE: config.scope,
+  OIDC_ROLES_CLAIM: config.roles_claim,
+};
 
+/** Substitute %%NAME%% (and legacy {client_id}) within a single path segment. */
+function interpolateSegment(segment: string): string {
+  return segment
+    .replace(/%%([A-Z0-9_]+)%%/g, (_match, name: string) => TEMPLATE_VARS[name] ?? `%%${name}%%`)
+    .replace(/\{client_id\}/g, config.client_id);
+}
+
+/**
+ * Split a claim-path template on dots and interpolate each segment. Templating
+ * is done per-segment so a substituted value (e.g. a client_id containing dots)
+ * stays a single object key.
+ *
+ * e.g. "resource_access.%%OIDC_CLIENT_ID%%.roles" -> ["resource_access", "<client_id>", "roles"]
+ */
+function claimPathSegments(template: string): string[] {
+  return template
+    .split('.')
+    .map(interpolateSegment)
+    .filter((s) => s.length > 0);
+}
+
+/** Walk a (templated) dot-separated claim path within a claims object. */
+function resolveClaimPath(source: Record<string, unknown>, pathTemplate: string): unknown {
   let current: unknown = source;
-  for (const segment of segments) {
+  for (const segment of claimPathSegments(pathTemplate)) {
     if (current && typeof current === 'object' && !Array.isArray(current) && segment in current) {
       current = (current as Record<string, unknown>)[segment];
     } else {
@@ -92,7 +110,7 @@ export function roleHome(roles: string[]): HomeTarget {
   return '/no-access';
 }
 
-/** Human-readable description of where roles are read from (for diagnostics). */
+/** Human-readable (interpolated) description of where roles are read from. */
 export function rolesSourceDescription(): string {
-  return config.roles_claim_path.replace('{client_id}', config.client_id);
+  return claimPathSegments(config.roles_claim_path).join('.');
 }
