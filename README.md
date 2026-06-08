@@ -11,8 +11,10 @@
 - **`courier`** — список заказов, которые нужно доставить;
 - **`supervisor`** — список курьеров и число выполненных за сегодня доставок.
 
-Роль определяется по клейму `roles` (список) — он считывается **и из ID-токена,
-и из access-токена** (берётся оттуда, где присутствует).
+Роль определяется по списку ролей в токене. По умолчанию роли берутся по пути
+`resource_access.<client_id>.roles` (Keycloak-подобная структура), с фолбэком на
+плоский клейм `roles`. Путь настраивается (`OIDC_ROLES_CLAIM_PATH`), а роли
+считываются **и из ID-токена, и из access-токена** (берутся оттуда, где есть).
 
 ## Стек
 
@@ -44,7 +46,8 @@
 | `OIDC_REDIRECT_URI` | `VITE_OIDC_REDIRECT_URI` | redirect_uri | `<origin>/callback` |
 | `OIDC_POST_LOGOUT_REDIRECT_URI` | `VITE_OIDC_POST_LOGOUT_REDIRECT_URI` | возврат после выхода | `<origin>/` |
 | `OIDC_SCOPE` | `VITE_OIDC_SCOPE` | запрашиваемые scopes | `openid profile` |
-| `OIDC_ROLES_CLAIM` | `VITE_OIDC_ROLES_CLAIM` | имя клейма с ролями | `roles` |
+| `OIDC_ROLES_CLAIM_PATH` | `VITE_OIDC_ROLES_CLAIM_PATH` | путь до ролей; `{client_id}` подставляется | `resource_access.{client_id}.roles` |
+| `OIDC_ROLES_CLAIM` | `VITE_OIDC_ROLES_CLAIM` | плоский клейм ролей (фолбэк) | `roles` |
 | `OIDC_PROXY` | `VITE_OIDC_PROXY` | прокси back-channel через `/oidc/` (фикс CORS) | `false` |
 | `OIDC_LOAD_USERINFO` | `VITE_OIDC_LOAD_USERINFO` | запрашивать userinfo после логина | `false` |
 | `OIDC_CLIENT_SECRET` | `VITE_OIDC_CLIENT_SECRET` | secret для confidential-режима (demo-only) | — (пусто) |
@@ -98,8 +101,9 @@ client_secret при обмене кода на токены — удобно, �
 - **Redirect URIs:** `http://localhost:5173/callback` (для локальной разработки)
   и `https://<домен-демо>/callback`;
 - **Post-logout redirect URIs:** `http://localhost:5173/` и `https://<домен-демо>/`;
-- **Scopes:** `openid profile` (+ при необходимости scope, который добавляет `roles`);
-- клейм `roles` (список) должен попадать в ID-токен и/или access-токен.
+- **Scopes:** `openid profile` (+ scope, который добавляет роли, напр. `roles`);
+- роли должны попадать в токен по пути `resource_access.<client_id>.roles`
+  (или настройте `OIDC_ROLES_CLAIM_PATH` под вашу структуру).
 
 Тестовым пользователям назначьте роли `courier` и/или `supervisor`.
 

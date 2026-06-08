@@ -31,16 +31,48 @@ function toRoleArray(value: unknown): string[] {
 }
 
 /**
- * Collect roles from the configured claim in BOTH the ID token (user.profile)
- * and the access token (decoded JWT). This is robust to IdPs that place the
- * `roles` claim in either token.
+ * Walk a dot-separated claim path. The literal segment `{client_id}` is
+ * substituted with the configured client_id (handled as a single key even if
+ * the client_id itself contains dots).
+ *
+ * e.g. "resource_access.{client_id}.roles" -> source.resource_access[clientId].roles
+ */
+function resolveClaimPath(source: Record<string, unknown>, pathTemplate: string): unknown {
+  const segments = pathTemplate
+    .split('.')
+    .map((s) => (s === '{client_id}' ? config.client_id : s))
+    .filter((s) => s.length > 0);
+
+  let current: unknown = source;
+  for (const segment of segments) {
+    if (current && typeof current === 'object' && !Array.isArray(current) && segment in current) {
+      current = (current as Record<string, unknown>)[segment];
+    } else {
+      return undefined;
+    }
+  }
+  return current;
+}
+
+/** Collect roles from one claims object: the nested path plus the flat fallback. */
+function rolesFromSource(source: Record<string, unknown>): string[] {
+  const nested = toRoleArray(resolveClaimPath(source, config.roles_claim_path));
+  const flat = toRoleArray(source[config.roles_claim]);
+  return [...nested, ...flat];
+}
+
+/**
+ * Collect roles from BOTH the ID token (user.profile) and the access token
+ * (decoded JWT), looking under the configured nested path
+ * (default `resource_access.<client_id>.roles`) and the flat `roles` claim.
  */
 export function extractRoles(user: User | null | undefined): string[] {
   if (!user) return [];
-  const claim = config.roles_claim;
-  const fromIdToken = toRoleArray((user.profile as Record<string, unknown> | undefined)?.[claim]);
-  const fromAccessToken = toRoleArray(decodeJwtPayload(user.access_token)[claim]);
-  const merged = new Set([...fromIdToken, ...fromAccessToken].map((r) => r.toLowerCase()));
+  const idClaims = (user.profile as Record<string, unknown> | undefined) ?? {};
+  const accessClaims = decodeJwtPayload(user.access_token);
+  const merged = new Set(
+    [...rolesFromSource(idClaims), ...rolesFromSource(accessClaims)].map((r) => r.toLowerCase()),
+  );
   return [...merged];
 }
 
@@ -58,4 +90,9 @@ export function roleHome(roles: string[]): HomeTarget {
   if (courier) return '/courier';
   if (supervisor) return '/supervisor';
   return '/no-access';
+}
+
+/** Human-readable description of where roles are read from (for diagnostics). */
+export function rolesSourceDescription(): string {
+  return config.roles_claim_path.replace('{client_id}', config.client_id);
 }

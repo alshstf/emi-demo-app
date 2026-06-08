@@ -16,7 +16,10 @@ export interface AppConfig {
   redirect_uri: string;
   post_logout_redirect_uri: string;
   scope: string;
+  /** Flat roles claim name (fallback). */
   roles_claim: string;
+  /** Dot-path to the roles claim; `{client_id}` is substituted with the client_id. */
+  roles_claim_path: string;
   /** Route the OIDC back-channel through a same-origin reverse proxy to avoid CORS. */
   proxy: boolean;
   /** Whether to call the userinfo endpoint after login (extra cross-origin XHR). */
@@ -62,6 +65,11 @@ export const config: AppConfig = {
   ),
   scope: resolve('OIDC_SCOPE', import.meta.env.VITE_OIDC_SCOPE, 'openid profile'),
   roles_claim: resolve('OIDC_ROLES_CLAIM', import.meta.env.VITE_OIDC_ROLES_CLAIM, 'roles'),
+  roles_claim_path: resolve(
+    'OIDC_ROLES_CLAIM_PATH',
+    import.meta.env.VITE_OIDC_ROLES_CLAIM_PATH,
+    'resource_access.{client_id}.roles',
+  ),
   proxy: resolveBool('OIDC_PROXY', import.meta.env.VITE_OIDC_PROXY, false),
   load_user_info: resolveBool('OIDC_LOAD_USERINFO', import.meta.env.VITE_OIDC_LOAD_USERINFO, false),
 };

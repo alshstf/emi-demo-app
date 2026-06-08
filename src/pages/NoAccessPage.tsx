@@ -1,8 +1,7 @@
 import { useAuth } from 'react-oidc-context';
 import { PageTransition } from '../components/PageTransition';
 import { Logo } from '../components/Logo';
-import { config } from '../config';
-import { extractRoles } from '../auth/roles';
+import { extractRoles, rolesSourceDescription } from '../auth/roles';
 import { useLogout } from '../auth/useLogout';
 
 // Authenticated, but without a known role (courier/supervisor). For the demo
@@ -23,7 +22,7 @@ export function NoAccessPage() {
 
         <div className="mt-5 rounded-2xl bg-burger-cream p-4 text-left">
           <div className="text-xs font-bold uppercase tracking-wide text-burger-char/50">
-            Клейм «{config.roles_claim}» в токене
+            Роли из «{rolesSourceDescription()}»
           </div>
           <div className="mt-2 flex flex-wrap gap-2">
             {roles.length > 0 ? (
