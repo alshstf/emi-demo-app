@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from 'react-oidc-context';
 import { AppHeader } from '../components/AppHeader';
-import { PageTransition } from '../components/PageTransition';
+import { PageTransition } from '../../../components/PageTransition';
 import { celebrateIfJustLoggedIn } from '../components/confetti';
 import { orders, type OrderStatus } from '../data/orders';
 

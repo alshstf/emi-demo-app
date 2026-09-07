@@ -1,5 +1,5 @@
 import { useAuth } from 'react-oidc-context';
-import { PageTransition } from '../components/PageTransition';
+import { PageTransition } from '../../../components/PageTransition';
 import { FloatingBurgers } from '../components/FloatingBurgers';
 import { Mascot } from '../components/Mascot';
 import { Logo } from '../components/Logo';
@@ -27,6 +27,9 @@ export function LandingPage() {
 
         <p className="mt-5 flex items-center gap-2 text-sm font-semibold text-burger-char/60">
           <span aria-hidden>🔐</span> Вход через Evolution Managed Identities
+        </p>
+        <p className="mt-1 text-xs font-semibold text-burger-char/50">
+          Сотрудники — по рабочей учётной записи, покупатели — например, через Яндекс ID: аккаунт создаётся сам.
         </p>
       </div>
 

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { PageTransition } from '../components/PageTransition';
+import { PageTransition } from '../../../components/PageTransition';
 import { Logo } from '../components/Logo';
 
 // Shown when a user has BOTH the courier and supervisor roles.

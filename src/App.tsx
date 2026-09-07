@@ -4,20 +4,14 @@ import { useAuth } from 'react-oidc-context';
 import { isConfigured } from './config';
 import { extractRoles, roleHome } from './auth/roles';
 import { RequireAuth, RequireRole } from './auth/guards';
-import { Splash } from './components/Splash';
-import { LandingPage } from './pages/LandingPage';
+import { theme } from './theme';
 import { CallbackPage } from './pages/CallbackPage';
-import { CourierPage } from './pages/CourierPage';
-import { SupervisorPage } from './pages/SupervisorPage';
-import { RolePicker } from './pages/RolePicker';
-import { NoAccessPage } from './pages/NoAccessPage';
-import { MisconfiguredPage } from './pages/MisconfiguredPage';
 
 /** "/" — landing for guests, role-based redirect for authenticated users. */
 function Home() {
   const auth = useAuth();
-  if (auth.isLoading) return <Splash />;
-  if (!auth.isAuthenticated) return <LandingPage />;
+  if (auth.isLoading) return <theme.Splash label={theme.splash.auth} />;
+  if (!auth.isAuthenticated) return <theme.Landing />;
   return <Navigate to={roleHome(extractRoles(auth.user))} replace />;
 }
 
@@ -25,7 +19,7 @@ export default function App() {
   const location = useLocation();
 
   // Hard stop if the OIDC client is not configured (missing authority/client_id).
-  if (!isConfigured) return <MisconfiguredPage />;
+  if (!isConfigured) return <theme.Misconfigured />;
 
   return (
     <AnimatePresence mode="wait">
@@ -36,7 +30,7 @@ export default function App() {
           path="/courier"
           element={
             <RequireRole role="courier">
-              <CourierPage />
+              <theme.CourierHome />
             </RequireRole>
           }
         />
@@ -44,7 +38,7 @@ export default function App() {
           path="/supervisor"
           element={
             <RequireRole role="supervisor">
-              <SupervisorPage />
+              <theme.SupervisorHome />
             </RequireRole>
           }
         />
@@ -52,18 +46,21 @@ export default function App() {
           path="/choose"
           element={
             <RequireAuth>
-              <RolePicker />
+              <theme.RolePicker />
             </RequireAuth>
           }
         />
         <Route
-          path="/no-access"
+          path="/cabinet"
           element={
             <RequireAuth>
-              <NoAccessPage />
+              <theme.DefaultHome />
             </RequireAuth>
           }
         />
+        {theme.extraRoutes?.map((r) => (
+          <Route key={r.path} path={r.path} element={<RequireAuth>{r.element}</RequireAuth>} />
+        ))}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AnimatePresence>

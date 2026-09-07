@@ -11,6 +11,12 @@ interface ImportMetaEnv {
   readonly VITE_OIDC_ROLES_CLAIM_PATH?: string;
   readonly VITE_OIDC_PROXY?: string;
   readonly VITE_OIDC_LOAD_USERINFO?: string;
+  readonly VITE_APP_THEME?: string;
+  readonly VITE_APP_THEME_HOSTS?: string;
+  readonly VITE_APP_THEME_SWITCH?: string;
+  readonly VITE_GIS_NAME?: string;
+  readonly VITE_GIS_FULL_NAME?: string;
+  readonly VITE_GIS_OPERATOR?: string;
 }
 
 interface ImportMeta {

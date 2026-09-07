@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from 'react-oidc-context';
 import { Logo } from './Logo';
-import { extractRoles } from '../auth/roles';
-import { useLogout } from '../auth/useLogout';
+import { extractRoles, isDefaultRole } from '../../../auth/roles';
+import { userProfile } from '../../../auth/profile';
+import { useLogout } from '../../../auth/useLogout';
 
 const ROLE_LABEL: Record<string, string> = { courier: 'Курьер', supervisor: 'Супервайзер' };
 const ROLE_CHIP: Record<string, string> = {
@@ -15,13 +16,8 @@ export function AppHeader({ subtitle }: { subtitle?: string }) {
   const navigate = useNavigate();
   const logout = useLogout();
   const roles = extractRoles(auth.user);
-  const p = auth.user?.profile;
-  const name =
-    (p?.name as string) ||
-    (p?.preferred_username as string) ||
-    (p?.given_name as string) ||
-    (p?.email as string) ||
-    'Пользователь';
+  const profile = userProfile(auth.user);
+  const name = profile.fullName;
 
   return (
     <header className="sticky top-0 z-20 flex items-center justify-between gap-4 border-b border-burger-char/10 bg-white/80 px-4 py-3 backdrop-blur-md sm:px-8">
@@ -38,8 +34,9 @@ export function AppHeader({ subtitle }: { subtitle?: string }) {
       <div className="flex items-center gap-3">
         <div className="hidden flex-col items-end sm:flex">
           <span className="font-display font-bold leading-tight text-burger-char">{name}</span>
+          {profile.email && <span className="text-xs font-semibold text-burger-char/50">{profile.email}</span>}
           <span className="mt-0.5 flex gap-1">
-            {roles.length === 0 && <span className="chip bg-burger-char/10 text-burger-char/60">нет ролей</span>}
+            {isDefaultRole(roles) && <span className="chip bg-burger-yellow/40 text-burger-char/80">Покупатель</span>}
             {roles.map((r) => (
               <span key={r} className={`chip ${ROLE_CHIP[r] ?? 'bg-burger-char/10 text-burger-char/70'}`}>
                 {ROLE_LABEL[r] ?? r}

@@ -1,8 +1,7 @@
 import confetti from 'canvas-confetti';
+import { consumeJustLoggedIn } from '../../../auth/loginFlag';
 
 type Opts = NonNullable<Parameters<typeof confetti>[0]>;
-
-const FLAG = 'blt_celebrate';
 
 /** A celebratory burst in the brand colors. */
 export function celebrate() {
@@ -16,23 +15,7 @@ export function celebrate() {
   fire(0.1, { spread: 120, startVelocity: 45 });
 }
 
-/** Marked by the callback page right after a successful login. */
-export function markJustLoggedIn() {
-  try {
-    sessionStorage.setItem(FLAG, '1');
-  } catch {
-    /* sessionStorage may be unavailable; ignore */
-  }
-}
-
 /** Fire confetti once, only when we just returned from a successful login. */
 export function celebrateIfJustLoggedIn() {
-  try {
-    if (sessionStorage.getItem(FLAG) === '1') {
-      sessionStorage.removeItem(FLAG);
-      celebrate();
-    }
-  } catch {
-    /* ignore */
-  }
+  if (consumeJustLoggedIn()) celebrate();
 }

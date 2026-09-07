@@ -1,5 +1,5 @@
 import { Logo } from '../components/Logo';
-import { config } from '../config';
+import { config } from '../../../config';
 
 // Shown when the app fails to bootstrap the OIDC client — most commonly when
 // proxy mode is on but discovery could not be fetched through /oidc/.

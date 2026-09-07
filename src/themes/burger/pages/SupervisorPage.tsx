@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { AppHeader } from '../components/AppHeader';
-import { PageTransition } from '../components/PageTransition';
+import { PageTransition } from '../../../components/PageTransition';
 import { celebrateIfJustLoggedIn } from '../components/confetti';
 import { couriers, dailyTarget } from '../data/couriers';
 

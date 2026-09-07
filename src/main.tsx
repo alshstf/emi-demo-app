@@ -4,11 +4,13 @@ import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider, type AuthProviderProps } from 'react-oidc-context';
 import { buildOidcSettings } from './oidc';
 import { isConfigured } from './config';
+import { theme, applyThemeMeta } from './theme';
 import App from './App';
-import { Splash } from './components/Splash';
-import { MisconfiguredPage } from './pages/MisconfiguredPage';
-import { BootstrapError } from './pages/BootstrapError';
 import './styles/index.css';
+
+// The skin is decided once, synchronously, before the first render — so even
+// the splash and the error screens come out in the right theme.
+applyThemeMeta();
 
 function Root() {
   const [settings, setSettings] = useState<AuthProviderProps | null>(null);
@@ -25,9 +27,9 @@ function Root() {
     };
   }, []);
 
-  if (!isConfigured) return <MisconfiguredPage />;
-  if (error) return <BootstrapError error={error} />;
-  if (!settings) return <Splash label="Подключаемся к Evolution Managed Identities…" />;
+  if (!isConfigured) return <theme.Misconfigured />;
+  if (error) return <theme.BootstrapError error={error} />;
+  if (!settings) return <theme.Splash label={theme.splash.boot} />;
 
   return (
     <AuthProvider {...settings}>

@@ -1,27 +1,8 @@
 import type { User } from 'oidc-client-ts';
 import { config } from '../config';
+import { decodeJwtPayload } from './profile';
 
 export type KnownRole = 'courier' | 'supervisor';
-
-/** Base64url-decode and JSON-parse a JWT payload. Returns {} on any failure. */
-function decodeJwtPayload(token?: string): Record<string, unknown> {
-  if (!token) return {};
-  const parts = token.split('.');
-  if (parts.length < 2) return {};
-  try {
-    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-    const binary = atob(base64);
-    // Correctly handle UTF-8 (e.g. Cyrillic names) in the payload.
-    const json = decodeURIComponent(
-      Array.prototype.map
-        .call(binary, (c: string) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join(''),
-    );
-    return JSON.parse(json) as Record<string, unknown>;
-  } catch {
-    return {};
-  }
-}
 
 /** Normalize a claim value (array, space/comma-separated string) into a string[]. */
 function toRoleArray(value: unknown): string[] {
@@ -98,16 +79,29 @@ export function hasRole(roles: string[], role: KnownRole): boolean {
   return roles.includes(role);
 }
 
-export type HomeTarget = '/courier' | '/supervisor' | '/choose' | '/no-access';
+export type HomeTarget = '/courier' | '/supervisor' | '/choose' | '/cabinet';
 
-/** Decide where an authenticated user should land based on their roles. */
+/** Route of the default (implicit) role — a user without courier/supervisor. */
+export const DEFAULT_ROLE_HOME: HomeTarget = '/cabinet';
+
+/** True when the user has no explicit role and is treated as a citizen / customer. */
+export function isDefaultRole(roles: string[]): boolean {
+  return !hasRole(roles, 'courier') && !hasRole(roles, 'supervisor');
+}
+
+/**
+ * Decide where an authenticated user should land based on their roles.
+ * No explicit role is not an error: such users are ordinary members of the
+ * public (citizen / customer) and get the default cabinet — registered on the
+ * fly from the token claims (see registration.ts).
+ */
 export function roleHome(roles: string[]): HomeTarget {
   const courier = hasRole(roles, 'courier');
   const supervisor = hasRole(roles, 'supervisor');
   if (courier && supervisor) return '/choose';
   if (courier) return '/courier';
   if (supervisor) return '/supervisor';
-  return '/no-access';
+  return DEFAULT_ROLE_HOME;
 }
 
 /** Human-readable (interpolated) description of where roles are read from. */

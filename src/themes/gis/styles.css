@@ -1,0 +1,25 @@
+/* «Типовая ГИС» — self-hosted Roboto (Cyrillic included), no external requests. */
+@import '@fontsource/roboto/400.css';
+@import '@fontsource/roboto/500.css';
+@import '@fontsource/roboto/700.css';
+
+/* Component classes (.gis-*) live in src/styles/index.css — Tailwind's @layer
+   directives only work inside the file that has the @tailwind directives. */
+
+/* «Версия для слабовидящих»: larger type, stronger contrast, no decoration. */
+html[data-a11y='1'] {
+  font-size: 118%;
+}
+html[data-a11y='1'] body {
+  background: #ffffff !important;
+  color: #000 !important;
+}
+html[data-a11y='1'] .gis-card,
+html[data-a11y='1'] .gis-table th,
+html[data-a11y='1'] .gis-table td {
+  border-color: #000 !important;
+}
+html[data-a11y='1'] a,
+html[data-a11y='1'] .gis-btn-link {
+  text-decoration: underline;
+}

@@ -14,10 +14,21 @@ body,
 
 body {
   margin: 0;
-  font-family: 'Nunito', system-ui, -apple-system, sans-serif;
-  background-color: #fff6e6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* ── Skin «Бургерный курьер» ─────────────────────────────────────────────── */
+html[data-theme='burger'] body {
+  font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+  background-color: #fff6e6;
+}
+
+/* ── Skin «Типовая ГИС» ──────────────────────────────────────────────────── */
+html[data-theme='gis'] body {
+  font-family: 'Roboto', 'Segoe UI', Arial, system-ui, sans-serif;
+  background-color: #f3f5f8;
+  color: #0b1f33;
 }
 
 @layer components {
@@ -46,6 +57,59 @@ body {
   .headline {
     @apply font-display font-extrabold leading-none text-burger-deepred;
     text-shadow: 0 3px 0 rgba(255, 255, 255, 0.65), 0 6px 18px rgba(158, 27, 27, 0.25);
+  }
+}
+
+/* ── «Типовая ГИС» component classes ─────────────────────────────────────── */
+@layer components {
+  .gis-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded px-5 py-2.5 text-sm font-semibold
+           transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gis-blue/50
+           focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .gis-btn-primary {
+    @apply gis-btn bg-gis-blue text-white hover:bg-gis-blueHover active:bg-gis-blueDark;
+  }
+  .gis-btn-secondary {
+    @apply gis-btn border border-gis-line bg-white text-gis-ink hover:border-gis-blue hover:text-gis-blue;
+  }
+  .gis-btn-link {
+    @apply inline-flex items-center gap-1 text-sm font-medium text-gis-blue hover:underline;
+  }
+  .gis-card {
+    @apply rounded-md border border-gis-line bg-white;
+  }
+  .gis-input {
+    @apply w-full rounded border border-gis-line bg-white px-3 py-2 text-sm text-gis-ink
+           placeholder:text-gis-muted focus:border-gis-blue focus:outline-none focus:ring-2 focus:ring-gis-blue/20;
+  }
+  .gis-label {
+    @apply text-xs font-medium uppercase tracking-wide text-gis-muted;
+  }
+  .gis-badge {
+    @apply inline-flex items-center gap-1 whitespace-nowrap rounded-sm px-2 py-0.5 text-xs font-semibold;
+  }
+  .gis-table {
+    @apply w-full border-collapse text-sm;
+  }
+  .gis-table th {
+    @apply border-b border-gis-line bg-gis-surface2 px-3 py-2.5 text-left text-xs font-semibold uppercase
+           tracking-wide text-gis-muted;
+  }
+  .gis-table td {
+    @apply border-b border-gis-line px-3 py-3 align-top text-gis-ink;
+  }
+  .gis-table tbody tr:hover {
+    @apply bg-gis-blueLight/40;
+  }
+  .gis-kv {
+    @apply grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-[minmax(180px,260px)_1fr];
+  }
+  .gis-kv dt {
+    @apply text-sm text-gis-muted;
+  }
+  .gis-kv dd {
+    @apply break-words text-sm font-medium text-gis-ink;
   }
 }
 

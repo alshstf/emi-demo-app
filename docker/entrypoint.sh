@@ -16,8 +16,14 @@ window.__APP_CONFIG__ = {
   OIDC_ROLES_CLAIM: "${OIDC_ROLES_CLAIM:-roles}",
   OIDC_ROLES_CLAIM_PATH: "${OIDC_ROLES_CLAIM_PATH:-resource_access.%%OIDC_CLIENT_ID%%.roles}",
   OIDC_PROXY: "${OIDC_PROXY:-false}",
-  OIDC_LOAD_USERINFO: "${OIDC_LOAD_USERINFO:-false}"
+  OIDC_LOAD_USERINFO: "${OIDC_LOAD_USERINFO:-false}",
+  APP_THEME: "${APP_THEME:-auto}",
+  APP_THEME_HOSTS: "${APP_THEME_HOSTS:-}",
+  APP_THEME_SWITCH: "${APP_THEME_SWITCH:-false}",
+  GIS_NAME: "${GIS_NAME:-}",
+  GIS_FULL_NAME: "${GIS_FULL_NAME:-}",
+  GIS_OPERATOR: "${GIS_OPERATOR:-}"
 };
 EOF
 
-echo "[entrypoint] runtime config written to ${CONFIG_FILE} (authority=${OIDC_AUTHORITY:-<unset>}, proxy=${OIDC_PROXY:-false})"
+echo "[entrypoint] runtime config written to ${CONFIG_FILE} (authority=${OIDC_AUTHORITY:-<unset>}, proxy=${OIDC_PROXY:-false}, theme=${APP_THEME:-auto})"

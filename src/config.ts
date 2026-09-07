@@ -24,6 +24,22 @@ export interface AppConfig {
   proxy: boolean;
   /** Whether to call the userinfo endpoint after login (extra cross-origin XHR). */
   load_user_info: boolean;
+
+  // ── Skin / theme ──────────────────────────────────────────────────────────
+  /** `burger` | `gis` pin the skin for the deployment; `auto` (or empty) enables host/query rules. */
+  theme: string;
+  /** `host=theme` rules (`,`/`;`-separated), e.g. `gis.demo.ru=gis,*.burger.demo.ru=burger`. */
+  theme_hosts: string;
+  /** Allow `?theme=…` (persisted in localStorage) when the theme is not pinned. Dev only. */
+  theme_switch: boolean;
+
+  // ── «Типовая ГИС» branding (gis skin only) ────────────────────────────────
+  /** Short system name shown in the header, e.g. «ГИС Реестр». */
+  gis_name: string;
+  /** Full official name shown on the landing page and in the footer. */
+  gis_full_name: string;
+  /** Operator (owner) of the system, shown in the footer. */
+  gis_operator: string;
 }
 
 declare global {
@@ -72,6 +88,18 @@ export const config: AppConfig = {
   ),
   proxy: resolveBool('OIDC_PROXY', import.meta.env.VITE_OIDC_PROXY, false),
   load_user_info: resolveBool('OIDC_LOAD_USERINFO', import.meta.env.VITE_OIDC_LOAD_USERINFO, false),
+
+  theme: resolve('APP_THEME', import.meta.env.VITE_APP_THEME, 'auto'),
+  theme_hosts: resolve('APP_THEME_HOSTS', import.meta.env.VITE_APP_THEME_HOSTS, ''),
+  theme_switch: resolveBool('APP_THEME_SWITCH', import.meta.env.VITE_APP_THEME_SWITCH, false),
+
+  gis_name: resolve('GIS_NAME', import.meta.env.VITE_GIS_NAME, 'Типовая ГИС'),
+  gis_full_name: resolve(
+    'GIS_FULL_NAME',
+    import.meta.env.VITE_GIS_FULL_NAME,
+    'Типовая государственная информационная система учёта и обработки заявлений',
+  ),
+  gis_operator: resolve('GIS_OPERATOR', import.meta.env.VITE_GIS_OPERATOR, 'Уполномоченный орган — оператор системы'),
 };
 
 /** True when the optional confidential-client mode is active (client_secret provided). */

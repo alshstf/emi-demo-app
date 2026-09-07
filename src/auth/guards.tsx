@@ -2,12 +2,12 @@ import type { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from 'react-oidc-context';
 import { extractRoles, hasRole, type KnownRole } from './roles';
-import { Splash } from '../components/Splash';
+import { theme } from '../theme';
 
 /** Requires an authenticated session; otherwise sends the user to the landing page. */
 export function RequireAuth({ children }: { children: ReactNode }) {
   const auth = useAuth();
-  if (auth.isLoading) return <Splash label="Проверяем пропуск…" />;
+  if (auth.isLoading) return <theme.Splash label={theme.splash.auth} />;
   if (!auth.isAuthenticated) return <Navigate to="/" replace />;
   return <>{children}</>;
 }
@@ -19,7 +19,7 @@ export function RequireAuth({ children }: { children: ReactNode }) {
  */
 export function RequireRole({ role, children }: { role: KnownRole; children: ReactNode }) {
   const auth = useAuth();
-  if (auth.isLoading) return <Splash label="Проверяем пропуск…" />;
+  if (auth.isLoading) return <theme.Splash label={theme.splash.auth} />;
   if (!auth.isAuthenticated) return <Navigate to="/" replace />;
   if (!hasRole(extractRoles(auth.user), role)) return <Navigate to="/" replace />;
   return <>{children}</>;
