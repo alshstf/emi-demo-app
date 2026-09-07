@@ -29,7 +29,7 @@ export function MisconfiguredPage() {
       </p>
       <pre className="overflow-x-auto rounded border border-gis-line bg-gis-navy p-3 text-xs text-white/90">
 {`# Docker
-docker run -p 8080:80 \\
+docker run -p 8080:8080 \\
   -e OIDC_AUTHORITY=https://<issuer> \\
   -e OIDC_CLIENT_ID=<client-id> \\
   -e APP_THEME=gis \\

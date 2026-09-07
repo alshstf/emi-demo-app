@@ -200,7 +200,7 @@ npm run dev              # http://localhost:5173
 ```bash
 docker build -t burger-courier .
 
-docker run --rm -p 8080:80 \
+docker run --rm -p 8080:8080 \
   -e OIDC_AUTHORITY="https://<issuer>" \
   -e OIDC_CLIENT_ID="<client-id>" \
   -e OIDC_REDIRECT_URI="http://localhost:8080/callback" \

@@ -14,7 +14,7 @@ export function MisconfiguredPage() {
 
         <div className="mt-5 rounded-2xl bg-burger-char/90 p-4 text-left font-mono text-xs leading-relaxed text-burger-cream">
           <div className="text-burger-yellow"># Docker</div>
-          <div>docker run -p 8080:80 \</div>
+          <div>docker run -p 8080:8080 \</div>
           <div>&nbsp;&nbsp;-e OIDC_AUTHORITY=https://&lt;issuer&gt; \</div>
           <div>&nbsp;&nbsp;-e OIDC_CLIENT_ID=&lt;client-id&gt; \</div>
           <div>&nbsp;&nbsp;burger-courier</div>
