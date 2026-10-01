@@ -1,7 +1,7 @@
 import type { ComponentType, ReactNode } from 'react';
 import type { KnownRole } from '../auth/roles';
 
-export type ThemeId = 'burger' | 'gis';
+export type ThemeId = 'burger' | 'gis' | 'gocloud';
 
 export interface AuthErrorProps {
   error: Error;

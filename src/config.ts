@@ -26,7 +26,7 @@ export interface AppConfig {
   load_user_info: boolean;
 
   // ── Skin / theme ──────────────────────────────────────────────────────────
-  /** `burger` | `gis` pin the skin for the deployment; `auto` (or empty) enables host/query rules. */
+  /** `burger` | `gis` | `gocloud` pin the skin for the deployment; `auto` (or empty) enables host/query rules (default skin: `gocloud`). */
   theme: string;
   /** `host=theme` rules (`,`/`;`-separated), e.g. `gis.demo.ru=gis,*.burger.demo.ru=burger`. */
   theme_hosts: string;
@@ -40,6 +40,14 @@ export interface AppConfig {
   gis_full_name: string;
   /** Operator (owner) of the system, shown in the footer. */
   gis_operator: string;
+
+  // ── Conference branding (gocloud skin only) ───────────────────────────────
+  /** Event name shown in the header, on the badge and in the browser tab, e.g. «GoCloud Tech 2026». */
+  event_name: string;
+  /** Event date as free text, e.g. «15 октября 2026». */
+  event_date: string;
+  /** Venue as free text. */
+  event_place: string;
 }
 
 declare global {
@@ -100,6 +108,10 @@ export const config: AppConfig = {
     'Типовая государственная информационная система учёта и обработки заявлений',
   ),
   gis_operator: resolve('GIS_OPERATOR', import.meta.env.VITE_GIS_OPERATOR, 'Уполномоченный орган — оператор системы'),
+
+  event_name: resolve('EVENT_NAME', import.meta.env.VITE_EVENT_NAME, 'GoCloud Tech 2026'),
+  event_date: resolve('EVENT_DATE', import.meta.env.VITE_EVENT_DATE, '15 октября 2026'),
+  event_place: resolve('EVENT_PLACE', import.meta.env.VITE_EVENT_PLACE, 'Москва, ДК завода «Серп и Молот»'),
 };
 
 /** True when the optional confidential-client mode is active (client_secret provided). */

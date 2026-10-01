@@ -10,9 +10,10 @@ export interface ResolvedTheme {
   locked: boolean;
 }
 
-const THEME_IDS: ThemeId[] = ['burger', 'gis'];
+const THEME_IDS: ThemeId[] = ['burger', 'gis', 'gocloud'];
 const STORAGE_KEY = 'emi_demo_theme';
-export const DEFAULT_THEME: ThemeId = 'burger';
+/** The conference skin is the default: it is used whenever no other skin is explicitly selected. */
+export const DEFAULT_THEME: ThemeId = 'gocloud';
 
 function asThemeId(value: string | null | undefined): ThemeId | undefined {
   const v = (value ?? '').trim().toLowerCase();
@@ -41,10 +42,10 @@ function themeForHost(rules: string, hostname: string): ThemeId | undefined {
 
 /**
  * Decide which skin to render. Resolution order:
- *   1. APP_THEME = burger | gis      → pinned for the whole deployment (no override)
+ *   1. APP_THEME = burger | gis | gocloud      → pinned for the whole deployment (no override)
  *   2. APP_THEME_HOSTS               → by the hostname the app is opened on
  *   3. ?theme=… / localStorage       → only when APP_THEME_SWITCH=true (dev / mixed stands)
- *   4. default (burger)
+ *   4. default (gocloud — the conference skin)
  *
  * Runs synchronously at startup so every screen (incl. splash and error pages)
  * is rendered in the right skin from the first frame.

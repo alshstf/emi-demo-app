@@ -31,7 +31,8 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
-    server: { port: 5173, host: true, proxy },
-    preview: { port: 5173, host: true },
+    // Bind to localhost only: the dev server must never listen on the LAN interfaces.
+    server: { port: 5173, host: 'localhost', proxy },
+    preview: { port: 5173, host: 'localhost' },
   };
 });

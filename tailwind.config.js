@@ -18,6 +18,24 @@ export default {
           char: '#2B1B12',
         },
         // «Типовая ГИС»: state-portal palette (deep blue on cool grey surfaces).
+        // «Бейдж GoCloud Tech»: light paper ground, near-black ink, conference green.
+        gc: {
+          green: '#26D07C',
+          greenHover: '#1FBF70',
+          greenDark: '#17804C',
+          greenLight: '#C2EDD8',
+          greenPale: '#EAF8F0',
+          ink: '#161916',
+          ink2: '#222222',
+          paper: '#F2F3F1',
+          line: '#D9DED9',
+          muted: '#5B625C',
+          grey: '#9AA09B',
+          red: '#D7263D',
+          redLight: '#FDECEE',
+          amber: '#B8720A',
+          amberLight: '#FEF0CC',
+        },
         gis: {
           blue: '#0D4CD3',
           blueHover: '#1D5DEB',
@@ -43,6 +61,8 @@ export default {
         display: ['"Baloo 2"', 'system-ui', 'sans-serif'],
         body: ['Nunito', 'system-ui', 'sans-serif'],
         gis: ['Roboto', '"Segoe UI"', 'Arial', 'system-ui', 'sans-serif'],
+        gocloud: ['Manrope', 'Verdana', 'system-ui', 'sans-serif'],
+        gcmono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
       boxShadow: {
         pop: '0 18px 40px -12px rgba(158, 27, 27, 0.45)',

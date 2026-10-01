@@ -1,0 +1,28 @@
+/* «Бейдж GoCloud Tech» — self-hosted Manrope (the conference typeface, Cyrillic
+   included) and JetBrains Mono for token claims. No external requests, so the
+   skin works on a lab stand without Wi-Fi. */
+@import '@fontsource/manrope/500.css';
+@import '@fontsource/manrope/700.css';
+@import '@fontsource/manrope/800.css';
+@import '@fontsource/jetbrains-mono/500.css';
+@import '@fontsource/jetbrains-mono/700.css';
+
+/* Component classes (.gc-*) live in src/styles/index.css — Tailwind's @layer
+   directives only work inside the file that has the @tailwind directives. */
+
+/* Lanyard ribbons above the badge: two strips meeting at the hole. */
+.gc-lanyard {
+  position: absolute;
+  left: 50%;
+  top: -14px;
+  width: 14px;
+  height: 94px;
+  margin-left: -7px;
+  transform-origin: 50% 100%;
+}
+.gc-lanyard--l {
+  transform: rotate(-28deg);
+}
+.gc-lanyard--r {
+  transform: rotate(28deg);
+}

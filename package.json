@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Демо-приложение Evolution Managed Identities — OIDC public client (Authorization Code + PKCE) с двумя темами: «Бургерный курьер» и «Типовая ГИС»",
+  "description": "Демо-приложение Evolution Managed Identities — OIDC public client (Authorization Code + PKCE) с тремя темами: «Бейдж GoCloud Tech» (по умолчанию), «Бургерный курьер» и «Типовая ГИС»",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -11,6 +11,8 @@
     "typecheck": "tsc -b --noEmit"
   },
   "dependencies": {
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@fontsource/manrope": "^5.3.0",
     "@fontsource/roboto": "^5.3.0",
     "canvas-confetti": "^1.9.3",
     "framer-motion": "^11.3.30",

@@ -17,6 +17,9 @@ interface ImportMetaEnv {
   readonly VITE_GIS_NAME?: string;
   readonly VITE_GIS_FULL_NAME?: string;
   readonly VITE_GIS_OPERATOR?: string;
+  readonly VITE_EVENT_NAME?: string;
+  readonly VITE_EVENT_DATE?: string;
+  readonly VITE_EVENT_PLACE?: string;
 }
 
 interface ImportMeta {

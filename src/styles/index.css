@@ -24,6 +24,13 @@ html[data-theme='burger'] body {
   background-color: #fff6e6;
 }
 
+/* ── Skin «Бейдж GoCloud Tech» ───────────────────────────────────────────── */
+html[data-theme='gocloud'] body {
+  font-family: 'Manrope', Verdana, system-ui, sans-serif;
+  background-color: #f2f3f1;
+  color: #161916;
+}
+
 /* ── Skin «Типовая ГИС» ──────────────────────────────────────────────────── */
 html[data-theme='gis'] body {
   font-family: 'Roboto', 'Segoe UI', Arial, system-ui, sans-serif;
@@ -123,4 +130,71 @@ html[data-theme='gis'] body {
       rgba(255, 199, 44, 0.05) 9deg 18deg
     ),
     linear-gradient(180deg, #ffd14d 0%, #ffc72c 45%, #f2a104 100%);
+}
+
+/* ── «Бейдж GoCloud Tech» component classes ──────────────────────────────── */
+@layer components {
+  .gc-btn {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-3 text-xs font-extrabold uppercase
+           tracking-[0.08em] transition-colors focus:outline-none focus-visible:ring-2
+           focus-visible:ring-gc-green focus-visible:ring-offset-2 disabled:cursor-not-allowed
+           disabled:opacity-50;
+  }
+  .gc-btn-primary {
+    @apply gc-btn bg-gc-ink text-white hover:bg-gc-ink2;
+  }
+  .gc-btn-green {
+    @apply gc-btn bg-gc-green text-gc-ink hover:bg-gc-greenHover;
+  }
+  .gc-btn-outline {
+    @apply gc-btn border-2 border-gc-ink bg-transparent text-gc-ink hover:bg-gc-ink hover:text-white;
+  }
+  .gc-btn-link {
+    @apply inline-flex items-center gap-1 text-sm font-bold text-gc-ink underline decoration-gc-green
+           decoration-2 underline-offset-4 hover:decoration-gc-ink;
+  }
+  .gc-card {
+    @apply border border-gc-line bg-white;
+  }
+  .gc-label {
+    @apply text-[11px] font-extrabold uppercase tracking-[0.16em] text-gc-muted;
+  }
+  .gc-h {
+    @apply font-extrabold uppercase leading-[1.02] tracking-[-0.02em] text-gc-ink;
+  }
+  .gc-chip {
+    @apply inline-flex items-center gap-1.5 whitespace-nowrap px-2 py-0.5 text-[11px] font-extrabold
+           uppercase tracking-[0.08em];
+  }
+  .gc-table {
+    @apply w-full border-collapse text-sm;
+  }
+  .gc-table th {
+    @apply border-b-2 border-gc-ink px-3 py-2 text-left text-[11px] font-extrabold uppercase
+           tracking-[0.12em] text-gc-muted;
+  }
+  .gc-table td {
+    @apply border-b border-gc-line px-3 py-3 align-middle text-gc-ink;
+  }
+  .gc-kv {
+    @apply grid grid-cols-1 gap-x-6 gap-y-2.5 sm:grid-cols-[minmax(160px,220px)_1fr];
+  }
+  .gc-kv dt {
+    @apply text-xs font-bold uppercase tracking-[0.1em] text-gc-muted sm:pt-0.5;
+  }
+  .gc-kv dd {
+    @apply break-words text-sm font-medium text-gc-ink;
+  }
+  .gc-stat {
+    @apply border border-gc-line bg-white px-5 py-4;
+  }
+  .gc-stat b {
+    @apply block text-4xl font-extrabold leading-none tracking-[-0.03em] text-gc-ink;
+  }
+  .gc-stat span {
+    @apply mt-2 block text-[11px] font-extrabold uppercase tracking-[0.12em] text-gc-muted;
+  }
+  .gc-pre {
+    @apply overflow-x-auto border border-gc-line bg-gc-paper p-3 font-gcmono text-xs leading-relaxed text-gc-ink;
+  }
 }

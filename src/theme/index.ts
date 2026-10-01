@@ -1,11 +1,12 @@
 import { burgerTheme } from '../themes/burger';
 import { gisTheme } from '../themes/gis';
+import { gocloudTheme } from '../themes/gocloud';
 import { resolveTheme, type ResolvedTheme } from './resolve';
 import type { Theme, ThemeId } from './types';
 
 export type { Theme, ThemeId, AuthErrorProps } from './types';
 
-const THEMES: Record<ThemeId, Theme> = { burger: burgerTheme, gis: gisTheme };
+const THEMES: Record<ThemeId, Theme> = { burger: burgerTheme, gis: gisTheme, gocloud: gocloudTheme };
 
 /** Resolved once at startup — the skin never changes while the app is open. */
 export const resolved: ResolvedTheme = resolveTheme();
